@@ -5,7 +5,271 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Monitora PERT | Painel dos Planos Táticos</title>
   <meta name="description" content="Painel de acompanhamento dos indicadores de esforço dos Planos Táticos de Reocupação Territorial." />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <style>
+:root {
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --text: #162033;
+  --muted: #667085;
+  --line: #d9e2ef;
+  --primary: #0f5d7e;
+  --primary-dark: #08394e;
+  --soft: #e8f4f8;
+  --green: #1f9d55;
+  --yellow: #b7791f;
+  --red: #d92d20;
+  --blue: #2563eb;
+  --gray: #98a2b3;
+  --shadow: 0 18px 40px rgba(22, 32, 51, .08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  line-height: 1.45;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 36px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  font-size: .78rem;
+  letter-spacing: .12em;
+  opacity: .86;
+}
+
+h1, h2, h3, p { margin-top: 0; }
+
+h1 { margin-bottom: 4px; font-size: clamp(1.8rem, 3vw, 2.8rem); }
+
+.subtitle { margin-bottom: 0; color: rgba(255,255,255,.82); }
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+}
+
+.btn-primary { background: #fff; color: var(--primary-dark); }
+.btn-secondary { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.28); }
+
+.container { width: min(1440px, calc(100% - 36px)); margin: 24px auto 42px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 16px;
+  padding: 18px;
+  margin-bottom: 22px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted);
+  font-size: .86rem;
+  font-weight: 700;
+}
+
+select, input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+}
+
+.notice {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  color: #7a4d00;
+  background: #fff7e6;
+  border: 1px solid #fedf89;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-end;
+  margin: 24px 0 14px;
+}
+
+.section-header h2 { margin-bottom: 4px; }
+.section-header p { margin-bottom: 0; color: var(--muted); }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: var(--soft);
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.kpi { padding: 18px; }
+.kpi span { display: block; color: var(--muted); font-weight: 700; font-size: .88rem; }
+.kpi strong { display: block; margin: 6px 0; font-size: 2rem; letter-spacing: -.03em; }
+.kpi small { color: var(--muted); }
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.chart-card, .table-card { padding: 18px; }
+
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.card-title h3 { margin-bottom: 4px; }
+.card-title p { color: var(--muted); margin-bottom: 0; }
+
+.bar-chart { display: grid; gap: 10px; }
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 170px 1fr 50px;
+  gap: 10px;
+  align-items: center;
+  font-size: .92rem;
+}
+
+.bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-weight: 700; }
+.bar-track { background: #eef2f6; height: 12px; border-radius: 999px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--primary); border-radius: 999px; min-width: 2px; }
+.bar-value { text-align: right; font-weight: 800; }
+
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.legend-item {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+  background: #fcfcfd;
+}
+
+.legend-item strong { display: block; font-size: 1.7rem; margin-bottom: 2px; }
+.legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+
+.table-card { margin-top: 16px; }
+.table-title { align-items: center; }
+.search { max-width: 360px; }
+.table-wrap { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+th, td { padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { text-align: left; color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; background: #f8fafc; }
+tr:hover td { background: #fcfdff; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 84px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.badge.green { background: #dcfae6; color: #067647; }
+.badge.yellow { background: #fef0c7; color: #93370d; }
+.badge.red { background: #fee4e2; color: #b42318; }
+.badge.blue { background: #dbeafe; color: #1d4ed8; }
+.badge.gray { background: #f2f4f7; color: #475467; }
+
+.footer {
+  width: min(1440px, calc(100% - 36px));
+  margin: 0 auto 28px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.print-only { display: none; }
+
+@media (max-width: 980px) {
+  .topbar { flex-direction: column; padding: 24px; }
+  .filters { grid-template-columns: repeat(2, 1fr); }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .legend-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .filters, .kpi-grid { grid-template-columns: 1fr; }
+  .section-header { align-items: flex-start; flex-direction: column; }
+  .bar-row { grid-template-columns: 1fr; gap: 5px; }
+  .bar-value { text-align: left; }
+}
+
+@media print {
+  body { background: #fff; }
+  .no-print, .topbar-actions, .footer, .search { display: none !important; }
+  .print-only { display: block; }
+  .topbar { color: #111; background: #fff; border-bottom: 2px solid #111; padding: 0 0 14px; }
+  .container { width: 100%; margin: 0; }
+  .card { box-shadow: none; border-color: #ddd; break-inside: avoid; }
+  .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+  .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+  table { font-size: .72rem; }
+  th, td { padding: 7px 5px; }
+  .report-footer { margin-top: 18px; font-size: .8rem; color: #555; }
+}
+
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -178,6 +442,424 @@
     <p>Base de dados: Google Sheets · Backend: Google Apps Script · Frontend: GitHub Pages</p>
   </footer>
 
-  <script src="assets/js/app.js"></script>
+  <script>
+/*
+  Monitora PERT — Dashboard GitHub Pages
+  1) Publique o Apps Script como Web App.
+  2) Cole a URL /exec abaixo.
+  3) Enquanto a URL estiver vazia, o painel carregará dados demonstrativos.
+*/
+
+const CONFIG = {
+  API_URL: "", // Exemplo: "https://script.google.com/macros/s/SEU_DEPLOY_ID/exec"
+  DEFAULT_PERIODO: ""
+};
+
+const state = {
+  raw: null,
+  filteredProjects: [],
+  filters: {
+    territorio: "",
+    eixo: "",
+    status: "",
+    periodo: "",
+    search: ""
+  }
+};
+
+const els = {};
+
+document.addEventListener("DOMContentLoaded", () => {
+  bindElements();
+  bindEvents();
+  state.filters.periodo = CONFIG.DEFAULT_PERIODO || new Date().toISOString().slice(0, 7);
+  els.filterPeriodo.value = state.filters.periodo;
+  loadDashboardData();
+});
+
+function bindElements() {
+  const ids = [
+    "btnReload", "btnPdf", "filterTerritorio", "filterEixo", "filterStatus", "filterPeriodo",
+    "searchText", "systemNotice", "lastUpdate", "activeContext",
+    "kpiPlanos", "kpiProjetos", "kpiExecucao", "kpiAtrasados", "kpiCriticos", "kpiPendencias",
+    "kpiRiscos", "kpiOrcamento", "chartStatus", "chartEixos", "chartSemaforo", "chartPendencias",
+    "projectsTable"
+  ];
+  ids.forEach(id => els[id] = document.getElementById(id));
+}
+
+function bindEvents() {
+  els.btnReload.addEventListener("click", loadDashboardData);
+  els.btnPdf.addEventListener("click", generatePdfReport);
+
+  [els.filterTerritorio, els.filterEixo, els.filterStatus, els.filterPeriodo].forEach(el => {
+    el.addEventListener("change", () => {
+      state.filters.territorio = els.filterTerritorio.value;
+      state.filters.eixo = els.filterEixo.value;
+      state.filters.status = els.filterStatus.value;
+      state.filters.periodo = els.filterPeriodo.value;
+      renderAll();
+    });
+  });
+
+  els.searchText.addEventListener("input", () => {
+    state.filters.search = els.searchText.value.trim().toLowerCase();
+    renderAll();
+  });
+}
+
+async function loadDashboardData() {
+  showNotice("Carregando dados do painel...", false);
+
+  if (!CONFIG.API_URL) {
+    state.raw = buildDemoData();
+    showNotice("Modo demonstração: configure a variável CONFIG.API_URL em assets/js/app.js para vincular o painel ao Google Sheets.", true);
+    setupFilters();
+    renderAll();
+    return;
+  }
+
+  try {
+    const payload = await jsonp(`${CONFIG.API_URL}?action=dashboard&periodo=${encodeURIComponent(state.filters.periodo || "")}`);
+    state.raw = payload;
+    showNotice("", false);
+    setupFilters();
+    renderAll();
+  } catch (error) {
+    console.error(error);
+    state.raw = buildDemoData();
+    showNotice("Não foi possível acessar o Apps Script. O painel foi carregado com dados demonstrativos. Verifique a URL do Web App e as permissões de implantação.", true);
+    setupFilters();
+    renderAll();
+  }
+}
+
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `monitoraPertCallback_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+    const script = document.createElement("script");
+    const separator = url.includes("?") ? "&" : "?";
+
+    window[callbackName] = data => {
+      cleanup();
+      resolve(data);
+    };
+
+    script.src = `${url}${separator}callback=${callbackName}`;
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Falha ao carregar JSONP"));
+    };
+
+    function cleanup() {
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    document.body.appendChild(script);
+  });
+}
+
+function showNotice(message, visible) {
+  if (!visible || !message) {
+    els.systemNotice.hidden = true;
+    els.systemNotice.textContent = "";
+    return;
+  }
+  els.systemNotice.hidden = false;
+  els.systemNotice.textContent = message;
+}
+
+function setupFilters() {
+  const projects = state.raw?.projetos || [];
+  fillSelect(els.filterTerritorio, unique(projects.map(p => p.territorio)).sort(), "Todos");
+  fillSelect(els.filterEixo, unique(projects.map(p => p.eixo)).sort(), "Todos");
+  els.filterTerritorio.value = state.filters.territorio;
+  els.filterEixo.value = state.filters.eixo;
+}
+
+function fillSelect(select, values, defaultText) {
+  const current = select.value;
+  select.innerHTML = `<option value="">${defaultText}</option>`;
+  values.forEach(value => {
+    if (!value) return;
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    select.appendChild(option);
+  });
+  if ([...select.options].some(opt => opt.value === current)) select.value = current;
+}
+
+function renderAll() {
+  if (!state.raw) return;
+
+  const filtered = filterProjects(state.raw.projetos || []);
+  state.filteredProjects = filtered;
+
+  renderContext();
+  renderKpis(filtered);
+  renderStatusChart(filtered);
+  renderEixosChart(filtered);
+  renderSemaforoChart(filtered);
+  renderPendenciasChart(filtered);
+  renderProjectsTable(filtered);
+}
+
+function filterProjects(projects) {
+  return projects.filter(p => {
+    const text = [p.id_projeto, p.territorio, p.eixo, p.projeto_iniciativa, p.responsavel_principal, p.indicador_principal]
+      .join(" ").toLowerCase();
+
+    return (!state.filters.territorio || p.territorio === state.filters.territorio)
+      && (!state.filters.eixo || p.eixo === state.filters.eixo)
+      && (!state.filters.status || p.status === state.filters.status)
+      && (!state.filters.search || text.includes(state.filters.search));
+  });
+}
+
+function renderContext() {
+  const context = state.filters.territorio || "Todos os territórios";
+  els.activeContext.textContent = context;
+  const updatedAt = state.raw?.meta?.atualizado_em || new Date().toLocaleString("pt-BR");
+  els.lastUpdate.textContent = `Última atualização: ${updatedAt}`;
+}
+
+function renderKpis(projects) {
+  const planos = unique(projects.map(p => p.plano_tatico)).length;
+  const totalProjetos = projects.length;
+  const execucaoMedia = avg(projects.map(p => toNumber(p.percentual_execucao)));
+  const atrasados = projects.filter(p => isAtrasado(p)).length;
+  const criticos = projects.filter(p => normalizeSemaforo(p.semaforo) === "Vermelho").length;
+  const pendencias = filterByContext(state.raw.pendencias || []).filter(p => isOpen(p.status)).length;
+  const riscos = filterByContext(state.raw.riscos || []).filter(r => String(r.nivel || "").toLowerCase() === "alto" && isOpen(r.status)).length;
+
+  const previsto = sum(projects.map(p => toNumber(p.custo_previsto)));
+  const executado = sum(projects.map(p => toNumber(p.custo_executado)));
+  const orcamento = previsto > 0 ? (executado / previsto) * 100 : 0;
+
+  els.kpiPlanos.textContent = planos;
+  els.kpiProjetos.textContent = totalProjetos;
+  els.kpiExecucao.textContent = `${round(execucaoMedia)}%`;
+  els.kpiAtrasados.textContent = atrasados;
+  els.kpiCriticos.textContent = criticos;
+  els.kpiPendencias.textContent = pendencias;
+  els.kpiRiscos.textContent = riscos;
+  els.kpiOrcamento.textContent = `${round(orcamento)}%`;
+}
+
+function renderStatusChart(projects) {
+  const counts = countBy(projects, p => p.status || "Sem status");
+  renderBarChart(els.chartStatus, counts, { suffix: "" });
+}
+
+function renderEixosChart(projects) {
+  const groups = groupBy(projects, p => p.eixo || "Sem eixo");
+  const values = {};
+  Object.entries(groups).forEach(([eixo, items]) => values[eixo] = round(avg(items.map(i => toNumber(i.percentual_execucao)))));
+  renderBarChart(els.chartEixos, values, { suffix: "%", max: 100 });
+}
+
+function renderSemaforoChart(projects) {
+  const labels = ["Azul", "Verde", "Amarelo", "Vermelho", "Cinza"];
+  const counts = countBy(projects, p => normalizeSemaforo(p.semaforo));
+  els.chartSemaforo.innerHTML = labels.map(label => {
+    const cls = colorClass(label);
+    return `<div class="legend-item"><strong>${counts[label] || 0}</strong><span><i class="legend-dot ${cls}" style="background: var(--${cssColor(label)});"></i>${label}</span></div>`;
+  }).join("");
+}
+
+function renderPendenciasChart(projects) {
+  const projectIds = new Set(projects.map(p => String(p.id_projeto)));
+  const pendencias = (state.raw.pendencias || []).filter(p => projectIds.has(String(p.id_projeto)) && isOpen(p.status));
+  const counts = countBy(pendencias, p => p.responsavel || "Sem responsável");
+  renderBarChart(els.chartPendencias, counts, { suffix: "" });
+}
+
+function renderBarChart(container, data, options = {}) {
+  const entries = Object.entries(data).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  if (!entries.length) {
+    container.innerHTML = `<p class="muted">Sem dados para os filtros selecionados.</p>`;
+    return;
+  }
+
+  const max = options.max || Math.max(...entries.map(([, value]) => value), 1);
+  container.innerHTML = entries.map(([label, value]) => {
+    const pct = Math.max(2, Math.min(100, (value / max) * 100));
+    return `<div class="bar-row">
+      <div class="bar-label" title="${escapeHtml(label)}">${escapeHtml(label)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <div class="bar-value">${value}${options.suffix || ""}</div>
+    </div>`;
+  }).join("");
+}
+
+function renderProjectsTable(projects) {
+  if (!projects.length) {
+    els.projectsTable.innerHTML = `<tr><td colspan="12">Sem projetos para os filtros selecionados.</td></tr>`;
+    return;
+  }
+
+  els.projectsTable.innerHTML = projects.map(p => {
+    const semaforo = normalizeSemaforo(p.semaforo);
+    return `<tr>
+      <td>${escapeHtml(p.id_projeto)}</td>
+      <td>${escapeHtml(p.territorio)}</td>
+      <td>${escapeHtml(p.eixo)}</td>
+      <td>${escapeHtml(p.projeto_iniciativa)}</td>
+      <td>${escapeHtml(p.responsavel_principal)}</td>
+      <td>${formatDate(p.data_fim_prevista)}</td>
+      <td><span class="badge ${statusClass(p.status)}">${escapeHtml(p.status)}</span></td>
+      <td>${escapeHtml(p.indicador_principal)}</td>
+      <td>${escapeHtml(p.meta)}</td>
+      <td>${escapeHtml(p.realizado)}</td>
+      <td>${round(toNumber(p.percentual_execucao))}%</td>
+      <td><span class="badge ${colorClass(semaforo)}">${semaforo}</span></td>
+    </tr>`;
+  }).join("");
+}
+
+function generatePdfReport() {
+  if (CONFIG.API_URL) {
+    const params = new URLSearchParams({
+      action: "pdf",
+      territorio: state.filters.territorio,
+      eixo: state.filters.eixo,
+      status: state.filters.status,
+      periodo: state.filters.periodo
+    });
+    window.open(`${CONFIG.API_URL}?${params.toString()}`, "_blank", "noopener,noreferrer");
+    return;
+  }
+  window.print();
+}
+
+function filterByContext(items) {
+  return items.filter(item => !state.filters.territorio || item.territorio === state.filters.territorio);
+}
+
+function isAtrasado(project) {
+  if (String(project.status || "").toLowerCase() === "atrasado") return true;
+  if (!project.data_fim_prevista || String(project.status || "").toLowerCase() === "concluído") return false;
+  return new Date(project.data_fim_prevista) < new Date() && toNumber(project.percentual_execucao) < 100;
+}
+
+function isOpen(status) {
+  const s = String(status || "").toLowerCase();
+  return !["concluído", "concluida", "concluída", "fechado", "fechada", "baixado", "resolvido"].includes(s);
+}
+
+function statusClass(status) {
+  const s = String(status || "").toLowerCase();
+  if (s.includes("concl")) return "blue";
+  if (s.includes("atras")) return "red";
+  if (s.includes("andamento")) return "green";
+  if (s.includes("não") || s.includes("nao")) return "gray";
+  return "yellow";
+}
+
+function normalizeSemaforo(value) {
+  const s = String(value || "").toLowerCase();
+  if (s.includes("azul")) return "Azul";
+  if (s.includes("verde")) return "Verde";
+  if (s.includes("amarelo")) return "Amarelo";
+  if (s.includes("vermelho")) return "Vermelho";
+  return "Cinza";
+}
+
+function colorClass(label) {
+  return ({ Azul: "blue", Verde: "green", Amarelo: "yellow", Vermelho: "red", Cinza: "gray" })[label] || "gray";
+}
+
+function cssColor(label) {
+  return ({ Azul: "blue", Verde: "green", Amarelo: "yellow", Vermelho: "red", Cinza: "gray" })[label] || "gray";
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+}
+
+function toNumber(value) {
+  if (typeof value === "number") return value;
+  if (value === null || value === undefined || value === "") return 0;
+  return Number(String(value).replace("%", "").replace(".", "").replace(",", ".")) || 0;
+}
+
+function sum(values) { return values.reduce((acc, n) => acc + toNumber(n), 0); }
+function avg(values) { const nums = values.map(toNumber).filter(n => Number.isFinite(n)); return nums.length ? sum(nums) / nums.length : 0; }
+function round(n) { return Math.round((toNumber(n) + Number.EPSILON) * 10) / 10; }
+function unique(values) { return [...new Set(values.filter(Boolean))]; }
+function groupBy(items, fn) { return items.reduce((acc, item) => { const key = fn(item); (acc[key] ||= []).push(item); return acc; }, {}); }
+function countBy(items, fn) { return items.reduce((acc, item) => { const key = fn(item); acc[key] = (acc[key] || 0) + 1; return acc; }, {}); }
+function escapeHtml(value) { return String(value ?? "").replace(/[&<>'"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c])); }
+
+function buildDemoData() {
+  const territorio = "Gardênia Azul / Rio das Pedras / Muzema";
+  return {
+    meta: { atualizado_em: new Date().toLocaleString("pt-BR"), fonte: "Dados demonstrativos" },
+    projetos: [
+      {
+        id_projeto: "1.2.1", territorio, plano_tatico: "PRT-GAR-RDP-MUZ-2026", eixo: "Segurança Pública e Justiça",
+        acao_estrategica: "1.2 Implementação de Bases Integradas de Segurança Territorial",
+        projeto_iniciativa: "Implantar Base Integrada de Segurança Territorial",
+        responsavel_principal: "SESP / SEPM", data_fim_prevista: "2026-10-31", status: "Em andamento",
+        custo_previsto: 1200000, custo_executado: 360000, percentual_execucao: 30,
+        indicador_principal: "% de marcos de implantação concluídos", meta: "100%", realizado: "30%", semaforo: "Amarelo"
+      },
+      {
+        id_projeto: "2.1.1", territorio, plano_tatico: "PRT-GAR-RDP-MUZ-2026", eixo: "Desenvolvimento Social",
+        acao_estrategica: "2.1 Mutirões de cidadania, saúde, educação e assistência social",
+        projeto_iniciativa: "Realizar mutirões integrados de cidadania",
+        responsavel_principal: "SEDSODH / SES / Município", data_fim_prevista: "2026-09-30", status: "Em andamento",
+        custo_previsto: 180000, custo_executado: 110000, percentual_execucao: 62,
+        indicador_principal: "Nº de mutirões realizados", meta: "8", realizado: "5", semaforo: "Amarelo"
+      },
+      {
+        id_projeto: "3.5.1", territorio, plano_tatico: "PRT-GAR-RDP-MUZ-2026", eixo: "Urbanismo e Infraestrutura",
+        acao_estrategica: "3.5 Iluminação pública estratégica",
+        projeto_iniciativa: "Instalar pontos de iluminação em áreas críticas",
+        responsavel_principal: "Município / Concessionária", data_fim_prevista: "2026-08-31", status: "Atrasado",
+        custo_previsto: 420000, custo_executado: 90000, percentual_execucao: 21,
+        indicador_principal: "Nº de pontos instalados", meta: "160", realizado: "34", semaforo: "Vermelho"
+      },
+      {
+        id_projeto: "4.3.1", territorio, plano_tatico: "PRT-GAR-RDP-MUZ-2026", eixo: "Desenvolvimento Econômico",
+        acao_estrategica: "4.3 Parcerias com empresas para contratação de mão de obra local",
+        projeto_iniciativa: "Implantar Banco de Talentos Comunitário",
+        responsavel_principal: "SETRAB / SINE", data_fim_prevista: "2026-10-15", status: "Em andamento",
+        custo_previsto: 80000, custo_executado: 40000, percentual_execucao: 50,
+        indicador_principal: "Nº de moradores cadastrados", meta: "500", realizado: "250", semaforo: "Amarelo"
+      },
+      {
+        id_projeto: "5.1.1", territorio, plano_tatico: "PRT-GAR-RDP-MUZ-2026", eixo: "Governança e Sustentabilidade",
+        acao_estrategica: "5.1 Implementação do GIGT",
+        projeto_iniciativa: "Instalar rotina de reuniões e atas do GIGT",
+        responsavel_principal: "SESP", data_fim_prevista: "2026-07-31", status: "Concluído",
+        custo_previsto: 0, custo_executado: 0, percentual_execucao: 100,
+        indicador_principal: "Nº de reuniões realizadas com ata", meta: "4", realizado: "4", semaforo: "Azul"
+      },
+      {
+        id_projeto: "5.4.1", territorio, plano_tatico: "PRT-GAR-RDP-MUZ-2026", eixo: "Governança e Sustentabilidade",
+        acao_estrategica: "5.4 Plataforma digital de transparência",
+        projeto_iniciativa: "Publicar painel de acompanhamento interno",
+        responsavel_principal: "SESP / PRODERJ", data_fim_prevista: "2026-11-30", status: "Não iniciado",
+        custo_previsto: 150000, custo_executado: 0, percentual_execucao: 0,
+        indicador_principal: "% de módulos do painel implantados", meta: "100%", realizado: "0%", semaforo: "Cinza"
+      }
+    ],
+    pendencias: [
+      { id_projeto: "3.5.1", territorio, responsavel: "Município", status: "Aberta", descricao: "Definir pontos prioritários de iluminação" },
+      { id_projeto: "5.4.1", territorio, responsavel: "PRODERJ", status: "Aberta", descricao: "Validar ambiente tecnológico" }
+    ],
+    riscos: [
+      { id_projeto: "3.5.1", territorio, nivel: "Alto", status: "Aberto", descricao: "Atraso na mobilização da concessionária" }
+    ]
+  };
+}
+
+  </script>
 </body>
 </html>
