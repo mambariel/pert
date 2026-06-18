@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monitora PERT | Painel dos Planos Táticos</title>
+  <meta name="description" content="Painel de acompanhamento dos indicadores de esforço dos Planos Táticos de Reocupação Territorial." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Gabinete de Gestão Integrada · GIGT/GGI</p>
+      <h1>Monitora PERT</h1>
+      <p class="subtitle">Painel de Acompanhamento dos Planos Táticos de Reocupação Territorial</p>
+    </div>
+    <div class="topbar-actions">
+      <button id="btnReload" class="btn btn-secondary" type="button">Atualizar dados</button>
+      <button id="btnPdf" class="btn btn-primary" type="button">Gerar relatório PDF</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="filters card no-print" aria-label="Filtros do painel">
+      <label>
+        Território
+        <select id="filterTerritorio">
+          <option value="">Todos</option>
+        </select>
+      </label>
+      <label>
+        Eixo
+        <select id="filterEixo">
+          <option value="">Todos</option>
+        </select>
+      </label>
+      <label>
+        Status
+        <select id="filterStatus">
+          <option value="">Todos</option>
+          <option>Não iniciado</option>
+          <option>Em andamento</option>
+          <option>Concluído</option>
+          <option>Atrasado</option>
+          <option>Suspenso</option>
+        </select>
+      </label>
+      <label>
+        Período
+        <input id="filterPeriodo" type="month" />
+      </label>
+    </section>
+
+    <section id="systemNotice" class="notice no-print" hidden></section>
+
+    <section class="section-header">
+      <div>
+        <h2>Visão Executiva</h2>
+        <p id="lastUpdate">Última atualização: —</p>
+      </div>
+      <span id="activeContext" class="pill">Todos os territórios</span>
+    </section>
+
+    <section class="kpi-grid" aria-label="Indicadores sintéticos">
+      <article class="kpi card">
+        <span>Planos táticos</span>
+        <strong id="kpiPlanos">0</strong>
+        <small>ativos ou em monitoramento</small>
+      </article>
+      <article class="kpi card">
+        <span>Projetos/Iniciativas</span>
+        <strong id="kpiProjetos">0</strong>
+        <small>cadastrados no Plano de Ação</small>
+      </article>
+      <article class="kpi card">
+        <span>Execução física média</span>
+        <strong id="kpiExecucao">0%</strong>
+        <small>média ponderada simples</small>
+      </article>
+      <article class="kpi card">
+        <span>Projetos atrasados</span>
+        <strong id="kpiAtrasados">0</strong>
+        <small>prazo vencido ou status crítico</small>
+      </article>
+      <article class="kpi card">
+        <span>Indicadores críticos</span>
+        <strong id="kpiCriticos">0</strong>
+        <small>semáforo vermelho</small>
+      </article>
+      <article class="kpi card">
+        <span>Pendências críticas</span>
+        <strong id="kpiPendencias">0</strong>
+        <small>abertas ou vencidas</small>
+      </article>
+      <article class="kpi card">
+        <span>Riscos altos ativos</span>
+        <strong id="kpiRiscos">0</strong>
+        <small>sem mitigação concluída</small>
+      </article>
+      <article class="kpi card">
+        <span>Execução orçamentária</span>
+        <strong id="kpiOrcamento">0%</strong>
+        <small>executado / previsto</small>
+      </article>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="card chart-card">
+        <div class="card-title">
+          <h3>Projetos por status</h3>
+          <p>Distribuição dos projetos/iniciativas</p>
+        </div>
+        <div id="chartStatus" class="bar-chart"></div>
+      </article>
+
+      <article class="card chart-card">
+        <div class="card-title">
+          <h3>Execução por eixo</h3>
+          <p>Média de avanço físico por eixo temático</p>
+        </div>
+        <div id="chartEixos" class="bar-chart"></div>
+      </article>
+
+      <article class="card chart-card">
+        <div class="card-title">
+          <h3>Semáforo dos indicadores</h3>
+          <p>Criticidade da última coleta disponível</p>
+        </div>
+        <div id="chartSemaforo" class="legend-grid"></div>
+      </article>
+
+      <article class="card chart-card">
+        <div class="card-title">
+          <h3>Pendências por órgão</h3>
+          <p>Gargalos institucionais abertos</p>
+        </div>
+        <div id="chartPendencias" class="bar-chart"></div>
+      </article>
+    </section>
+
+    <section class="card table-card">
+      <div class="card-title table-title">
+        <div>
+          <h3>Detalhamento tático dos projetos e iniciativas</h3>
+          <p>Indicadores de esforço vinculados aos Planos de Ação</p>
+        </div>
+        <input id="searchText" class="search no-print" type="search" placeholder="Pesquisar projeto, órgão ou indicador..." />
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Território</th>
+              <th>Eixo</th>
+              <th>Projeto/Iniciativa</th>
+              <th>Responsável</th>
+              <th>Prazo</th>
+              <th>Status</th>
+              <th>Indicador</th>
+              <th>Meta</th>
+              <th>Realizado</th>
+              <th>Avanço</th>
+              <th>Semáforo</th>
+            </tr>
+          </thead>
+          <tbody id="projectsTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="print-only report-footer">
+      <p>Relatório extraído do Monitora PERT. Documento gerado para acompanhamento tático pelo GIGT e visão executiva pelo GGI.</p>
+    </section>
+  </main>
+
+  <footer class="footer no-print">
+    <p>Base de dados: Google Sheets · Backend: Google Apps Script · Frontend: GitHub Pages</p>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
